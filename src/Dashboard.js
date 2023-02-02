@@ -23,7 +23,7 @@ import {
   ColorSwatch,
 } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
-import { MapContainer, TileLayer, GeoJSON, LayersControl } from 'react-leaflet'
+import { MapContainer, TileLayer, GeoJSON, LayersControl,  useMap, useMapEvents } from 'react-leaflet'
 import Kilifi2022 from "./Kilifi2022";
 import Kilifi2018 from './Kilifi2018';
 import Kilifi2016 from './Kilifi2016';
@@ -92,11 +92,26 @@ export default function Dashboard() {
   const [data2018, setData2018] = useState([145, 857, 890, 1456]);
   const [data2020, setData2020] = useState([147, 946, 807, 1448]);
   const [data2022, setData2022] = useState([114, 721, 1083, 1431]);
+  const [zoom, setZoom] = useState(12);
+  const [center, setCenter] = useState([-3.365315,39.963263])
 
-  const [close1, setClose1] = useState(false);
-  const [close2, setClose2] = useState(false);
-  const [close3, setClose3] = useState(false);
-  const [close4, setClose4] = useState(false);
+  const ZoomComponent = () => {
+    const mapEvents = useMapEvents({
+        zoomend: () => {
+            setZoom(mapEvents.getZoom());
+        },
+        moveend: () => {
+          let el = mapEvents.getCenter();
+          setCenter([el.lat, el.lng])
+        },
+        mouseover: (e) => {
+          console.log(e.target);
+        }
+    });
+
+
+    return null
+}
 
   const HelpPanel = () => {
     return (
@@ -172,7 +187,7 @@ export default function Dashboard() {
             <Text mb={5} size="xs" color="dimmed">
                 Mida Creek 2022
             </Text>
-            <Line data={chart2022} options={options} />
+            <Bar data={chart2022} options={options} />
             </Paper>
     </Container>
     </Container>
@@ -185,31 +200,30 @@ export default function Dashboard() {
 
 const Mangrove2022 = () => {
     return (
-        <Container sx={(theme) => ({margin: 0, padding: 0})} size={130} className='leaflet-bottom leaflet-right'>
-        <Container size={130} className="leaflet-control leaflet-bar" sx={(theme) => ({
+        <Container sx={(theme) => ({margin: 0, padding: 0})} size={160} className='leaflet-bottom leaflet-right'>
+        <Container size={160} className="leaflet-control leaflet-bar" sx={(theme) => ({
         backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8]  : "#ffff",
         height: 130,
-        width: 130,
+        width: 160,
         })} >
             <Paper sx={(theme) => ({
             height: '100%',
             width: '100%',
             backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8]  : "#ffff",
             })}>
+                <Text mb={10} weight={500} size="sm">Area(Ha)</Text>
                 <Text mb={5} size="xs" color="dimmed">
-                    Mangroves 2022
+                    Mangroves: <span style={{color: theme.colors.green[9]}}>{data2022[3]}</span>
                 </Text>
-                <RingProgress
-            size={80}
-            roundCaps
-            thickness={4}
-            sections={[{ value: (data2022[3] / (data2022[0] + data2022[1] + data2022[2] + data2022[3])) * 100, color: theme.colors.green[9], }]}
-            label={
-              <Center>
-                <Text>{((data2022[3] / (data2022[0] + data2022[1] + data2022[2] + data2022[3])) * 100).toFixed(0)} %</Text>
-              </Center>
-            }
-          />
+                <Text mb={5} size="xs" color="dimmed">
+                    Bare Land: <span style={{color: theme.colors.red[9]}}>{data2022[1]}</span>
+                </Text>
+                <Text mb={5} size="xs" color="dimmed">
+                    Water: <span style={{color: theme.colors.blue[9]}}>{data2022[2]}</span>
+                </Text>
+                <Text mb={5} size="xs" color="dimmed">
+                    Other Vegetation: <span style={{color: theme.colors.yellow[9]}}>{data2022[0]}</span>
+                </Text>
                 </Paper>
         </Container>
         </Container>
@@ -218,20 +232,21 @@ const Mangrove2022 = () => {
 
   const MapPanel2022 = () => {
     return (
-        <MapContainer zoomControl={false} style={{height: '100%', width: '100%', backgroundColor: '#101113'}} center={[-3.365315,39.963263]} zoom={12} scrollWheelZoom={true}>
+        <MapContainer zoomControl={false} style={{height: '100%', width: '100%', backgroundColor: '#101113'}} center={center} zoom={zoom} scrollWheelZoom={true}>
                 <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
         />
         <GeoJSON data={Kilifi2022} style={(feature) => {
             return {
-                color: feature.properties.VALUE === 3.0 ? "red" : feature.properties.VALUE === 6.0 ? "yellow" : feature.properties.VALUE === 2.0 ? "blue" : "green",
+                color: feature.properties.VALUE === 3.0 ? "red" : feature.properties.VALUE === 6.0 ? "transparent" : feature.properties.VALUE === 2.0 ? "blue" : "green",
                 fillColor:feature.properties.VALUE === 3.0 ? "red" : feature.properties.VALUE === 6.0 ? "yellow" : feature.properties.VALUE === 2.0 ? "blue" : "green",
             }
         }} />
         <Legend2022 />
         <Mangrove2022 />
         <HelpPanel />
+        <ZoomComponent />
       </MapContainer>
     )
 }
@@ -273,7 +288,7 @@ const chart2018 = {
             <Text mb={5} size="xs" color="dimmed">
                 Mida Creek 2018
             </Text>
-            <Line data={chart2018} options={options} />
+            <Bar data={chart2018} options={options} />
             </Paper>
     </Container>
     </Container>
@@ -286,31 +301,30 @@ const chart2018 = {
 
 const Mangrove2018 = () => {
     return (
-        <Container sx={(theme) => ({margin: 0, padding: 0})} size={130} className='leaflet-bottom leaflet-right'>
-        <Container size={130} className="leaflet-control leaflet-bar" sx={(theme) => ({
+        <Container sx={(theme) => ({margin: 0, padding: 0})} size={160} className='leaflet-bottom leaflet-right'>
+        <Container size={160} className="leaflet-control leaflet-bar" sx={(theme) => ({
         backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8]  : "#ffff",
         height: 130,
-        width: 130,
+        width: 160,
         })} >
             <Paper sx={(theme) => ({
             height: '100%',
             width: '100%',
             backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8]  : "#ffff",
             })}>
+                <Text mb={10} weight={500} size="sm">Area(Ha)</Text>
                 <Text mb={5} size="xs" color="dimmed">
-                    Mangroves 2018
+                    Mangroves: <span style={{color: theme.colors.green[9]}}>{data2018[3]}</span>
                 </Text>
-                <RingProgress
-            size={80}
-            roundCaps
-            thickness={4}
-            sections={[{ value: (data2018[3] / (data2018[0] + data2018[1] + data2018[2] + data2018[3])) * 100, color: theme.colors.green[9], }]}
-            label={
-              <Center>
-                <Text>{((data2018[3] / (data2018[0] + data2018[1] + data2018[2] + data2018[3])) * 100).toFixed(0)} %</Text>
-              </Center>
-            }
-          />
+                <Text mb={5} size="xs" color="dimmed">
+                    Bare Land: <span style={{color: theme.colors.red[9]}}>{data2018[1]}</span>
+                </Text>
+                <Text mb={5} size="xs" color="dimmed">
+                    Water: <span style={{color: theme.colors.blue[9]}}>{data2018[2]}</span>
+                </Text>
+                <Text mb={5} size="xs" color="dimmed">
+                    Other Vegetation: <span style={{color: theme.colors.yellow[9]}}>{data2018[0]}</span>
+                </Text>
                 </Paper>
         </Container>
         </Container>
@@ -319,20 +333,21 @@ const Mangrove2018 = () => {
 
 const MapPanel2018 = () => {
     return (
-        <MapContainer zoomControl={false} style={{height: '100%', width: '100%', backgroundColor: '#101113'}} center={[-3.365315,39.963263]} zoom={12} scrollWheelZoom={true}>
+        <MapContainer zoomControl={false} style={{height: '100%', width: '100%', backgroundColor: '#101113'}} center={center} zoom={zoom} scrollWheelZoom={true}>
                 <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
         />
         <GeoJSON data={Kilifi2018} style={(feature) => {
             return {
-                color: feature.properties.VALUE === 3.0 ? "red" : feature.properties.VALUE === 6.0 ? "yellow" : feature.properties.VALUE === 2.0 ? "blue" : "green",
+                color: feature.properties.VALUE === 3.0 ? "red" : feature.properties.VALUE === 6.0 ? "transparent" : feature.properties.VALUE === 2.0 ? "blue" : "green",
                 fillColor:feature.properties.VALUE === 3.0 ? "red" : feature.properties.VALUE === 6.0 ? "yellow" : feature.properties.VALUE === 2.0 ? "blue" : "green",
             }
         }} />
         <Legend2018 />
         <Mangrove2018 />
         <HelpPanel />
+        <ZoomComponent />
       </MapContainer>
     )
 }
@@ -374,7 +389,7 @@ const chart2016 = {
             <Text mb={5} size="xs" color="dimmed">
                 Mida Creek 2016
             </Text>
-            <Line data={chart2016} options={options} />
+            <Bar data={chart2016} options={options} />
             </Paper>
     </Container>
     </Container>
@@ -387,31 +402,30 @@ const chart2016 = {
 
 const Mangrove2016 = () => {
     return (
-        <Container sx={(theme) => ({margin: 0, padding: 0})} size={130} className='leaflet-bottom leaflet-right'>
-        <Container size={130} className="leaflet-control leaflet-bar" sx={(theme) => ({
+        <Container sx={(theme) => ({margin: 0, padding: 0})} size={160} className='leaflet-bottom leaflet-right'>
+        <Container size={160} className="leaflet-control leaflet-bar" sx={(theme) => ({
         backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8]  : "#ffff",
         height: 130,
-        width: 130,
+        width: 160,
         })} >
             <Paper sx={(theme) => ({
             height: '100%',
             width: '100%',
             backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8]  : "#ffff",
             })}>
+                <Text mb={10} weight={500} size="sm">Area(Ha)</Text>
                 <Text mb={5} size="xs" color="dimmed">
-                    Mangroves 2016
+                    Mangroves: <span style={{color: theme.colors.green[9]}}>{data2016[3]}</span>
                 </Text>
-                <RingProgress
-            size={80}
-            roundCaps
-            thickness={4}
-            sections={[{ value: (data2016[3] / (data2016[0] + data2016[1] + data2016[2] + data2016[3])) * 100, color: theme.colors.green[9], }]}
-            label={
-              <Center>
-                <Text>{((data2016[3] / (data2016[0] + data2016[1] + data2016[2] + data2016[3])) * 100).toFixed(0)} %</Text>
-              </Center>
-            }
-          />
+                <Text mb={5} size="xs" color="dimmed">
+                    Bare Land: <span style={{color: theme.colors.red[9]}}>{data2016[1]}</span>
+                </Text>
+                <Text mb={5} size="xs" color="dimmed">
+                    Water: <span style={{color: theme.colors.blue[9]}}>{data2016[2]}</span>
+                </Text>
+                <Text mb={5} size="xs" color="dimmed">
+                    Other Vegetation: <span style={{color: theme.colors.yellow[9]}}>{data2016[0]}</span>
+                </Text>
                 </Paper>
         </Container>
         </Container>
@@ -420,20 +434,21 @@ const Mangrove2016 = () => {
 
 const MapPanel2016 = () => {
     return (
-        <MapContainer zoomControl={false} style={{height: '100%', width: '100%', backgroundColor: '#101113'}} center={[-3.365315,39.963263]} zoom={12} scrollWheelZoom={true}>
+        <MapContainer zoomControl={false} style={{height: '100%', width: '100%', backgroundColor: '#101113'}} center={center} zoom={zoom} scrollWheelZoom={true}>
                 <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
         />
                 <GeoJSON data={Kilifi2016} style={(feature) => {
             return {
-                color: feature.properties.VALUE === 3.0 ? "red" : feature.properties.VALUE === 6.0 ? "yellow" : feature.properties.VALUE === 2.0 ? "blue" : "green",
+                color: feature.properties.VALUE === 3.0 ? "red" : feature.properties.VALUE === 6.0 ? "transparent" : feature.properties.VALUE === 2.0 ? "blue" : "green",
                 fillColor:feature.properties.VALUE === 3.0 ? "red" : feature.properties.VALUE === 6.0 ? "yellow" : feature.properties.VALUE === 2.0 ? "blue" : "green",
             }
         }} />
         <Legend2016 />
         <Mangrove2016 />
         <HelpPanel />
+        <ZoomComponent />
       </MapContainer>
     )
 }
@@ -475,7 +490,7 @@ const chart2020 = {
             <Text mb={5} size="xs" color="dimmed">
                 Mida Creek 2020
             </Text>
-            <Line data={chart2020} options={options} />
+            <Bar data={chart2020} options={options} />
             </Paper>
     </Container>
     </Container>
@@ -488,31 +503,31 @@ const chart2020 = {
 
 const Mangrove2020 = () => {
     return (
-        <Container sx={(theme) => ({margin: 0, padding: 0})} size={130} className='leaflet-bottom leaflet-right'>
-        <Container size={130} className="leaflet-control leaflet-bar" sx={(theme) => ({
+        <Container sx={(theme) => ({margin: 0, padding: 0})} size={160} className='leaflet-bottom leaflet-right'>
+        <Container size={160} className="leaflet-control leaflet-bar" sx={(theme) => ({
         backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8]  : "#ffff",
         height: 130,
-        width: 130,
+        width: 160,
         })} >
             <Paper sx={(theme) => ({
             height: '100%',
             width: '100%',
             backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8]  : "#ffff",
             })}>
+                <Text mb={10} weight={500} size="sm">Area(Ha)</Text>
                 <Text mb={5} size="xs" color="dimmed">
-                    Mangroves 2020
+                    Mangroves: <span style={{color: theme.colors.green[9]}}>{data2020[3]}</span>
                 </Text>
-                <RingProgress
-            size={80}
-            roundCaps
-            thickness={4}
-            sections={[{ value: (data2020[3] / (data2020[0] + data2020[1] + data2020[2] + data2020[3])) * 100, color: theme.colors.green[9], }]}
-            label={
-              <Center>
-                <Text>{((data2020[3] / (data2020[0] + data2020[1] + data2020[2] + data2020[3])) * 100).toFixed(0)} %</Text>
-              </Center>
-            }
-          />
+                <Text mb={5} size="xs" color="dimmed">
+                    Bare Land: <span style={{color: theme.colors.red[9]}}>{data2020[1]}</span>
+                </Text>
+                <Text mb={5} size="xs" color="dimmed">
+                    Water: <span style={{color: theme.colors.blue[9]}}>{data2020[2]}</span>
+                </Text>
+                <Text mb={5} size="xs" color="dimmed">
+                    Other Vegetation: <span style={{color: theme.colors.yellow[9]}}>{data2020[0]}</span>
+                </Text>
+
                 </Paper>
         </Container>
         </Container>
@@ -521,7 +536,7 @@ const Mangrove2020 = () => {
 
 const MapPanel2020 = () => {
     return (
-        <MapContainer zoomControl={false} style={{height: '100%', width: '100%', backgroundColor: '#101113'}} center={[-3.365315,39.963263]} zoom={12} scrollWheelZoom={true}>
+        <MapContainer zoomControl={false} style={{height: '100%', width: '100%', backgroundColor: '#101113'}} center={center} zoom={zoom} scrollWheelZoom={true}>
                 <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
@@ -529,13 +544,14 @@ const MapPanel2020 = () => {
 
         <GeoJSON data={Kilifi2020} style={(feature) => {
             return {
-                color: feature.properties.VALUE === 3.0 ? "red" : feature.properties.VALUE === 6.0 ? "yellow" : feature.properties.VALUE === 2.0 ? "blue" : "green",
+                color: feature.properties.VALUE === 3.0 ? "red" : feature.properties.VALUE === 6.0 ? "transparent" : feature.properties.VALUE === 2.0 ? "blue" : "green",
                 fillColor:feature.properties.VALUE === 3.0 ? "red" : feature.properties.VALUE === 6.0 ? "yellow" : feature.properties.VALUE === 2.0 ? "blue" : "green",
             }
         }} />
         <Legend2020 />
         <Mangrove2020 />
         <HelpPanel />
+        <ZoomComponent />
       </MapContainer>
     )
 }
