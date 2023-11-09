@@ -28,6 +28,12 @@ import Kilifi2022 from "./Kilifi2022";
 import Kilifi2018 from './Kilifi2018';
 import Kilifi2016 from './Kilifi2016';
 import Kilifi2020 from './Kilifi2020';
+import kanagoni from "./kanagoni";
+import kibaoni from "./kibaoni";
+import midaCreek from "./mida-creek";
+import mtwapaCreek from "./mtwapa-creek";
+import ngomeni from "./ngomeni";
+
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -247,6 +253,45 @@ const Mangrove2022 = () => {
         <Mangrove2022 />
         <HelpPanel />
         <ZoomComponent />
+        <GeoJSON data={kanagoni} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
+
+<GeoJSON data={kibaoni} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
+
+<GeoJSON data={midaCreek} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
+
+<GeoJSON data={mtwapaCreek} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
+
+<GeoJSON data={ngomeni} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
       </MapContainer>
     )
 }
@@ -348,6 +393,46 @@ const MapPanel2018 = () => {
         <Mangrove2018 />
         <HelpPanel />
         <ZoomComponent />
+
+        <GeoJSON data={kanagoni} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
+
+<GeoJSON data={kibaoni} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
+
+<GeoJSON data={midaCreek} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
+
+<GeoJSON data={mtwapaCreek} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
+
+<GeoJSON data={ngomeni} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
       </MapContainer>
     )
 }
@@ -449,6 +534,46 @@ const MapPanel2016 = () => {
         <Mangrove2016 />
         <HelpPanel />
         <ZoomComponent />
+
+        <GeoJSON data={kanagoni} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
+
+<GeoJSON data={kibaoni} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
+
+<GeoJSON data={midaCreek} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
+
+<GeoJSON data={mtwapaCreek} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
+
+<GeoJSON data={ngomeni} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
       </MapContainer>
     )
 }
@@ -552,6 +677,46 @@ const MapPanel2020 = () => {
         <Mangrove2020 />
         <HelpPanel />
         <ZoomComponent />
+
+        <GeoJSON data={kanagoni} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
+
+<GeoJSON data={kibaoni} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
+
+<GeoJSON data={midaCreek} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
+
+<GeoJSON data={mtwapaCreek} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
+
+<GeoJSON data={ngomeni} style={(f, l) => {
+          return {
+            color: "red",
+            fillColor: "red",
+            opacity: 1
+          }
+        }} />
       </MapContainer>
     )
 }
